@@ -8,6 +8,7 @@ const db = require("./db/models");
 app.use(cors());
 app.use(bodyParser.json());
 app.use("/products", sneakerRoutes);
+app.use("/media", express.static("media"));
 
 app.use((err, req, res, next) => {
   res

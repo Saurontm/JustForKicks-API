@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
     name: { type: DataTypes.STRING },
     slug: { type: DataTypes.STRING, unique: true },
     price: { type: DataTypes.INTEGER },
-    imageURL: { type: DataTypes.STRING },
+    image: { type: DataTypes.STRING },
     description: { type: DataTypes.STRING },
   });
   SequelizeSlugify.slugifyModel(Product, { source: ["name"] });

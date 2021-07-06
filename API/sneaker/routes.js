@@ -7,6 +7,8 @@ const {
   updateSneaker,
   fetchSneaker,
 } = require("./controllers");
+
+const multer = require("multer");
 const router = express.Router();
 
 router.param("productID", async (req, res, next, productID) => {
@@ -21,9 +23,18 @@ router.param("productID", async (req, res, next, productID) => {
   }
 });
 
+const storage = multer.diskStorage({
+  destination: "./media",
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}${file.originalname}`);
+  },
+});
+
+const upload = multer({ storage });
+
 router.get("/", sneakerFetch);
 router.delete("/:productID", deleteSneaker);
-router.post("/", createSneaker);
-router.put("/:productID", updateSneaker);
+router.post("/", upload.single("image"), createSneaker);
+router.put("/:productID", upload.single("image"), updateSneaker);
 
 module.exports = router;

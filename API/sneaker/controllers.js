@@ -22,6 +22,7 @@ exports.sneakerFetch = async (req, res, next) => {
 
 exports.createSneaker = async (req, res, next) => {
   try {
+    if (req.file) req.body.image = `http://${req.get("host")}/${req.file.path}`;
     const newSneaker = await Product.create(req.body);
     res.status(201).json(newSneaker);
   } catch (error) {
@@ -40,6 +41,7 @@ exports.deleteSneaker = async (req, res, next) => {
 
 exports.updateSneaker = async (req, res, next) => {
   try {
+    if (req.file) req.body.image = `http://${req.get("host")}/${req.file.path}`;
     await req.sneaker.update(req.body);
     res.status(204).end();
   } catch (error) {
