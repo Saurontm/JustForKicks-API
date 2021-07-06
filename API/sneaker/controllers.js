@@ -1,48 +1,48 @@
-const slugify = require("slugify");
 const { Product } = require("../../db/models");
 
-exports.sneakerFetch = async (req, res) => {
+exports.fetchSneaker = async (productID, next) => {
+  try {
+    const foundSneaker = await Product.findByPk(productID);
+    return foundSneaker;
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.sneakerFetch = async (req, res, next) => {
   try {
     const products = await Product.findAll({
       attributes: { exclude: ["createdAt", "updatedAt"] },
     });
     res.json(products);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
-exports.createSneaker = async (req, res) => {
+exports.createSneaker = async (req, res, next) => {
   try {
     const newSneaker = await Product.create(req.body);
     res.status(201).json(newSneaker);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
-exports.deleteSneaker = async (req, res) => {
-  const { productID } = req.params;
+exports.deleteSneaker = async (req, res, next) => {
   try {
-    const foundSneaker = await Product.findByPk(productID);
-    if (foundSneaker) {
-      await foundSneaker.destroy();
-      res.status(204).end();
-    }
+    await req.sneaker.destroy();
+    res.status(204).end();
   } catch (error) {
-    res.status(404).json({ message: "product not found" });
+    next(error);
   }
 };
 
-exports.updateSneaker = async (req, res) => {
-  const { productID } = req.params;
+exports.updateSneaker = async (req, res, next) => {
   try {
-    const foundSneaker = await Product.findByPk(productID);
-    if (foundSneaker) {
-      await foundSneaker.update(req.body);
-      res.status(204).end();
-    }
+    await req.sneaker.update(req.body);
+    res.status(204).end();
   } catch (error) {
-    res.status(404).json({ message: "product not found" });
+    next(error);
   }
 };

@@ -9,6 +9,16 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use("/products", sneakerRoutes);
 
+app.use((err, req, res, next) => {
+  res
+    .status(err.status || 500)
+    .json({ message: err.message || "Internal Server Error." });
+});
+
+app.use((err, res, next) => {
+  res.status(404).json({ message: "Path Not Found." });
+});
+
 const run = async () => {
   try {
     await db.sequelize.sync();
