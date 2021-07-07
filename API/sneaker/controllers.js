@@ -42,8 +42,8 @@ exports.deleteSneaker = async (req, res, next) => {
 exports.updateSneaker = async (req, res, next) => {
   try {
     if (req.file) req.body.image = `http://${req.get("host")}/${req.file.path}`;
-    await req.sneaker.update(req.body);
-    res.status(204).end();
+    const updatedSneaker = await req.sneaker.update(req.body);
+    res.json(updatedSneaker);
   } catch (error) {
     next(error);
   }
