@@ -1,22 +1,22 @@
 const express = require("express");
 
 const {
-  sneakerFetch,
-  deleteSneaker,
-  updateSneaker,
-  fetchSneaker,
+  brandFetch,
+  createBrand,
+  fetchBrand,
+  createSneaker,
 } = require("./controllers");
 
 const multer = require("multer");
 const router = express.Router();
 
-router.param("productID", async (req, res, next, productID) => {
-  const sneaker = await fetchSneaker(productID, next);
-  if (sneaker) {
-    req.sneaker = sneaker;
+router.param("brandID", async (req, res, next, brandID) => {
+  const brand = await fetchBrand(brandID, next);
+  if (brand) {
+    req.brand = brand;
     next();
   } else {
-    const error = new Error("product not found");
+    const error = new Error("brand not found");
     error.status = 404;
     next(error);
   }
@@ -31,8 +31,8 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-router.get("/", sneakerFetch);
-router.delete("/:productID", deleteSneaker);
-router.put("/:productID", upload.single("image"), updateSneaker);
+router.get("/", brandFetch);
+router.post("/", upload.single("image"), createBrand);
+router.post("/:brandID/products", upload.single("image"), createSneaker);
 
 module.exports = router;

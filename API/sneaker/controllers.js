@@ -1,4 +1,4 @@
-const { Product } = require("../../db/models");
+const { Product, Brand } = require("../../db/models");
 
 exports.fetchSneaker = async (productID, next) => {
   try {
@@ -12,19 +12,10 @@ exports.fetchSneaker = async (productID, next) => {
 exports.sneakerFetch = async (req, res, next) => {
   try {
     const products = await Product.findAll({
-      attributes: { exclude: ["createdAt", "updatedAt"] },
+      attributes: { exclude: [["brandID"], "createdAt", "updatedAt"] },
+      include: { model: Brand, as: "brand", attributes: ["name"] },
     });
     res.json(products);
-  } catch (error) {
-    next(error);
-  }
-};
-
-exports.createSneaker = async (req, res, next) => {
-  try {
-    if (req.file) req.body.image = `http://${req.get("host")}/${req.file.path}`;
-    const newSneaker = await Product.create(req.body);
-    res.status(201).json(newSneaker);
   } catch (error) {
     next(error);
   }
