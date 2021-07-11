@@ -3,6 +3,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const sneakerRoutes = require("./API/sneaker/routes");
 const brandRoutes = require("./API/brand/routes");
+const userRoutes = require("./API/user/routes");
 const app = express();
 const db = require("./db/models");
 
@@ -10,6 +11,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use("/products", sneakerRoutes);
 app.use("/brands", brandRoutes);
+app.use(userRoutes);
 app.use("/media", express.static("media"));
 
 app.use((err, req, res, next) => {
