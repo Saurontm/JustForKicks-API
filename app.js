@@ -4,11 +4,15 @@ const bodyParser = require("body-parser");
 const sneakerRoutes = require("./API/sneaker/routes");
 const brandRoutes = require("./API/brand/routes");
 const userRoutes = require("./API/user/routes");
+const passport = require("passport");
 const app = express();
 const db = require("./db/models");
+const { localStrategy } = require("./middleware/passport");
 
 app.use(cors());
 app.use(bodyParser.json());
+app.use(passport.initialize());
+passport.use(localStrategy);
 app.use("/products", sneakerRoutes);
 app.use("/brands", brandRoutes);
 app.use(userRoutes);
