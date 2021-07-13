@@ -1,4 +1,5 @@
 const express = require("express");
+const passport = require("passport");
 
 const {
   brandFetch,
@@ -32,7 +33,17 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 router.get("/", brandFetch);
-router.post("/", upload.single("image"), createBrand);
-router.post("/:brandID/products", upload.single("image"), createSneaker);
+router.post(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  upload.single("image"),
+  createBrand
+);
+router.post(
+  "/:brandID/products",
+  passport.authenticate("jwt", { session: false }),
+  upload.single("image"),
+  createSneaker
+);
 
 module.exports = router;

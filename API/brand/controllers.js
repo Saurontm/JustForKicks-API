@@ -23,7 +23,17 @@ exports.brandFetch = async (req, res, next) => {
 
 exports.createBrand = async (req, res, next) => {
   try {
+    const foundBrand = await Brand.findOne({
+      where: { userId: req.user.id },
+    });
+    if (foundBrand) {
+      const err = new Error("You already own a Brand!");
+      err.status = 400;
+      return next(err);
+    }
+
     if (req.file) req.body.image = `http://${req.get("host")}/${req.file.path}`;
+    req.body.userId = req.user.id;
     const newBrand = await Brand.create(req.body);
     res.status(201).json(newBrand);
   } catch (error) {
@@ -33,10 +43,17 @@ exports.createBrand = async (req, res, next) => {
 
 exports.createSneaker = async (req, res, next) => {
   try {
-    if (req.file) req.body.image = `http://${req.get("host")}/${req.file.path}`;
-    req.body.brandID = req.brand.id;
-    const newSneaker = await Product.create(req.body);
-    res.status(201).json(newSneaker);
+    if (req.user.id === req.brand.userId) {
+      if (req.file)
+        req.body.image = `http://${req.get("host")}/${req.file.path}`;
+      req.body.brandID = req.brand.id;
+      const newProduct = await Product.create(req.body);
+      res.status(201).json(newProduct);
+    } else {
+      const err = new Error("Unauthorized!");
+      err.status = 401;
+      return next(err);
+    }
   } catch (error) {
     next(error);
   }

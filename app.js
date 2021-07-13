@@ -8,11 +8,14 @@ const passport = require("passport");
 const app = express();
 const db = require("./db/models");
 const { localStrategy } = require("./middleware/passport");
+const { JWTStrategy } = require("./middleware/passport");
 
 app.use(cors());
 app.use(bodyParser.json());
 app.use(passport.initialize());
 passport.use(localStrategy);
+passport.use(JWTStrategy);
+
 app.use("/products", sneakerRoutes);
 app.use("/brands", brandRoutes);
 app.use(userRoutes);
@@ -30,7 +33,7 @@ app.use((err, res, next) => {
 
 const run = async () => {
   try {
-    await db.sequelize.sync();
+    await db.sequelize.sync(); //{ force: true }
     console.log("Connection to database successful!");
     await app.listen(8000, () => {
       console.log("The application is running on localhost:8000");

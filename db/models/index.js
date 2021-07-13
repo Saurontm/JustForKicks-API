@@ -54,4 +54,11 @@ db.Product.belongsTo(db.Brand, {
   as: "brand",
 });
 
+db.User.hasOne(db.Brand, {
+  as: "brand",
+  foreignKey: "userId",
+});
+
+db.Brand.belongsTo(db.User, { as: "user" });
+
 module.exports = db;
