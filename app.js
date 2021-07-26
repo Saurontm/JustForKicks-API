@@ -1,12 +1,19 @@
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+
+//routes
 const sneakerRoutes = require("./API/sneaker/routes");
 const brandRoutes = require("./API/brand/routes");
 const userRoutes = require("./API/user/routes");
+const orderRoutes = require("./API/order/routes");
+
 const passport = require("passport");
+
 const app = express();
+
 const db = require("./db/models");
+
 const { localStrategy } = require("./middleware/passport");
 const { JWTStrategy } = require("./middleware/passport");
 
@@ -20,6 +27,7 @@ app.use("/products", sneakerRoutes);
 app.use("/brands", brandRoutes);
 app.use(userRoutes);
 app.use("/media", express.static("media"));
+app.use(orderRoutes);
 
 app.use((err, req, res, next) => {
   res
@@ -33,7 +41,7 @@ app.use((err, res, next) => {
 
 const run = async () => {
   try {
-    await db.sequelize.sync(); //{ force: true }
+    await db.sequelize.sync({ alter: true }); //{ force: true }
     console.log("Connection to database successful!");
     await app.listen(8000, () => {
       console.log("The application is running on localhost:8000");
